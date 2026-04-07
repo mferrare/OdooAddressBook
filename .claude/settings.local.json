@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(zip -r ../OdooAddressBook.xpi .)",
-      "Bash(gh auth:*)",
-      "Bash(git --version)"
-    ]
-  }
-}
