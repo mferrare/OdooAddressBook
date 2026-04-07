@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Odoo Address Book Sync — Settings</title>
+  <link rel="stylesheet" href="options.css"/>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header>
+    <img src="../icons/icon.svg" alt="" class="header-icon"/>
+    <div>
+      <h1>Odoo Address Book Sync</h1>
+      <p class="subtitle">Configure two-way contact synchronisation</p>
+    </div>
+  </header>
+
+  <!-- ── Step indicators ──────────────────────────────────────────────────── -->
+  <nav id="step-nav" aria-label="Setup steps">
+    <div class="step-dot active" data-step="1"><span>1</span><label>Address Book</label></div>
+    <div class="step-dot"        data-step="2"><span>2</span><label>Odoo Connection</label></div>
+    <div class="step-dot"        data-step="3"><span>3</span><label>Sync Settings</label></div>
+    <div class="step-dot"        data-step="4"><span>4</span><label>Initial Sync</label></div>
+  </nav>
+
+  <!-- ── Step 1: Address Book ─────────────────────────────────────────────── -->
+  <section id="step-1" class="step active">
+    <h2>Choose a Thunderbird Address Book</h2>
+    <p>Select the address book to keep in sync with Odoo, or create a dedicated new one.</p>
+
+    <div class="choice-group">
+      <label class="choice-card">
+        <input type="radio" name="abChoice" value="existing" checked/>
+        <div class="card-body">
+          <strong>Use an existing address book</strong>
+          <span>Pick from the address books already in Thunderbird.</span>
+        </div>
+      </label>
+      <label class="choice-card">
+        <input type="radio" name="abChoice" value="new"/>
+        <div class="card-body">
+          <strong>Create a new address book</strong>
+          <span>A fresh, dedicated book for Odoo contacts.</span>
+        </div>
+      </label>
+    </div>
+
+    <div id="existing-ab-panel">
+      <label for="ab-select">Address book:</label>
+      <select id="ab-select">
+        <option value="">— loading… —</option>
+      </select>
+      <p id="ab-error" class="error hidden"></p>
+    </div>
+
+    <div id="new-ab-panel" class="hidden">
+      <label for="new-ab-name">New address book name:</label>
+      <input type="text" id="new-ab-name" value="Odoo Contacts" maxlength="80" spellcheck="false"/>
+    </div>
+
+    <div class="actions">
+      <button id="step1-next" class="primary">Next →</button>
+    </div>
+  </section>
+
+  <!-- ── Step 2: Odoo Connection ──────────────────────────────────────────── -->
+  <section id="step-2" class="step hidden">
+    <h2>Connect to Odoo</h2>
+    <p>Enter the details for your Odoo instance. The extension communicates directly with the Odoo JSON-RPC API.</p>
+
+    <div class="form-grid">
+
+      <label for="odoo-url">Odoo URL</label>
+      <div class="input-group">
+        <input type="url" id="odoo-url" placeholder="https://mycompany.odoo.com"
+               spellcheck="false" autocomplete="off"/>
+        <button id="fetch-dbs" class="secondary small">Fetch Databases</button>
+      </div>
+
+      <label for="odoo-db">Database</label>
+      <div class="input-group">
+        <select id="odoo-db">
+          <option value="">— enter URL and click Fetch Databases —</option>
+        </select>
+        <input type="text" id="odoo-db-manual" placeholder="or type database name"
+               spellcheck="false" autocomplete="off" class="hidden"/>
+        <button id="toggle-db-input" class="secondary small">Type manually</button>
+      </div>
+
+      <label for="odoo-user">Username / E-mail</label>
+      <input type="text" id="odoo-user" placeholder="admin" spellcheck="false" autocomplete="username"/>
+
+      <label for="odoo-auth-mode">Authentication</label>
+      <div class="radio-row">
+        <label><input type="radio" name="authMode" value="password" checked/> Password</label>
+        <label><input type="radio" name="authMode" value="apikey"/> API Key <span class="recommended">(required for 2FA accounts)</span></label>
+      </div>
+
+      <label for="odoo-pass" id="odoo-pass-label">Password</label>
+      <div class="input-group">
+        <input type="password" id="odoo-pass" placeholder="••••••••" autocomplete="current-password"/>
+        <button id="toggle-pass" class="secondary small icon-btn" title="Show/hide" aria-label="Show password">👁</button>
+      </div>
+
+      <label for="odoo-apikey" id="odoo-apikey-label" class="hidden">API Key</label>
+      <div class="input-group hidden" id="odoo-apikey-row">
+        <input type="password" id="odoo-apikey" placeholder="paste your Odoo API key" autocomplete="off" spellcheck="false"/>
+        <button id="toggle-apikey" class="secondary small icon-btn" title="Show/hide" aria-label="Show API key">👁</button>
+      </div>
+
+    </div>
+
+    <div id="apikey-hint" class="hint-box hidden">
+      To create an API key in Odoo: <strong>Settings → Technical → API Keys → New</strong>
+      (enable developer mode first if the menu is missing: add <code>?debug=1</code> to your Odoo URL).
+    </div>
+
+    <div id="conn-status" class="status-bar hidden"></div>
+
+    <div class="actions">
+      <button id="step2-back"        class="secondary">← Back</button>
+      <button id="test-connection"   class="secondary">Test Connection</button>
+      <button id="step2-next"        class="primary">Next →</button>
+    </div>
+  </section>
+
+  <!-- ── Step 3: Sync Settings ────────────────────────────────────────────── -->
+  <section id="step-3" class="step hidden">
+    <h2>Sync Settings</h2>
+
+    <div class="form-grid">
+
+      <label for="sync-filter">Odoo contacts to sync</label>
+      <select id="sync-filter">
+        <option value="individuals_with_email">Individual contacts with email address</option>
+        <option value="all_with_email">All partners (companies + individuals) with email</option>
+        <option value="all">All partners (including those without email)</option>
+      </select>
+
+      <label for="sync-interval">Sync every</label>
+      <div class="input-group">
+        <input type="number" id="sync-interval" value="30" min="5" max="1440" style="width:5em"/>
+        <span class="unit">minutes</span>
+      </div>
+
+      <label for="conflict-resolution">When both sides changed</label>
+      <select id="conflict-resolution">
+        <option value="odoo">Odoo wins (recommended — Odoo is master)</option>
+        <option value="thunderbird">Thunderbird wins</option>
+      </select>
+
+      <label for="show-notifications">Notifications after sync</label>
+      <label class="toggle">
+        <input type="checkbox" id="show-notifications" checked/>
+        <span class="slider"></span>
+        Show a notification when sync completes
+      </label>
+
+    </div>
+
+    <div class="actions">
+      <button id="step3-back" class="secondary">← Back</button>
+      <button id="step3-next" class="primary">Save &amp; Sync Now →</button>
+    </div>
+  </section>
+
+  <!-- ── Step 4: Initial Sync ─────────────────────────────────────────────── -->
+  <section id="step-4" class="step hidden">
+    <h2>Initial Sync</h2>
+
+    <div id="sync-progress-panel">
+      <div class="spinner"></div>
+      <p id="sync-progress-msg">Starting…</p>
+    </div>
+
+    <div id="sync-result-panel" class="hidden">
+      <div id="sync-result-icon" class="result-icon"></div>
+      <p id="sync-result-msg"></p>
+      <ul id="sync-error-list" class="error-list hidden"></ul>
+    </div>
+
+    <div class="actions">
+      <button id="step4-back"  class="secondary hidden">← Back to Settings</button>
+      <button id="step4-done"  class="primary   hidden">Done ✓</button>
+      <button id="step4-retry" class="secondary hidden">Retry Sync</button>
+    </div>
+  </section>
+
+  <!-- ── Already-configured view (shown instead of wizard when configured) ── -->
+  <section id="configured-view" class="step hidden">
+    <h2>Sync Configuration</h2>
+
+    <div class="info-grid" id="config-summary">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="actions" style="margin-top:2rem">
+      <button id="reconfigure-btn" class="secondary">Re-run Setup Wizard</button>
+      <button id="reset-sync-btn"  class="secondary">Reset Sync State</button>
+      <button id="sync-now-btn"    class="primary">Sync Now</button>
+    </div>
+    <div id="configured-status" class="status-bar hidden"></div>
+  </section>
+
+</div><!-- /#app -->
+
+<script src="options.js"></script>
+</body>
+</html>

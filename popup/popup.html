@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Odoo Address Book Sync</title>
+  <link rel="stylesheet" href="popup.css"/>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- Header -->
+  <header>
+    <img src="../icons/icon.svg" alt="" class="icon"/>
+    <span class="title">Odoo Sync</span>
+  </header>
+
+  <!-- Not configured -->
+  <div id="not-configured">
+    <p>The extension is not configured yet.</p>
+    <button id="setup-btn" class="primary full-width">Open Setup Wizard</button>
+  </div>
+
+  <!-- Main panel (shown when configured) -->
+  <div id="main-panel" class="hidden">
+
+    <div class="status-row">
+      <span id="status-dot" class="dot idle"></span>
+      <span id="status-text">Idle</span>
+    </div>
+
+    <div class="info-row">
+      <span class="label">Last sync</span>
+      <span id="last-sync-time">Never</span>
+    </div>
+
+    <div class="info-row" id="last-result-row">
+      <span class="label">Last result</span>
+      <span id="last-result-text">—</span>
+    </div>
+
+    <div id="progress-row" class="hidden info-row">
+      <span class="label">Progress</span>
+      <span id="progress-msg">…</span>
+    </div>
+
+    <div class="error-box hidden" id="error-box"></div>
+
+    <div class="button-row">
+      <button id="sync-btn" class="primary">Sync Now</button>
+      <button id="settings-btn" class="secondary">Settings</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

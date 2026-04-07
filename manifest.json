@@ -1,0 +1,49 @@
+{
+  "manifest_version": 2,
+  "name": "Odoo Address Book Sync",
+  "description": "Two-way sync between a Thunderbird address book and Odoo contacts",
+  "version": "1.0.0",
+  "author": "OdooAddressBook",
+
+  "applications": {
+    "gecko": {
+      "id": "odoo-addressbook-sync@localhost",
+      "strict_min_version": "91.0"
+    }
+  },
+
+  "permissions": [
+    "addressBooks",
+    "storage",
+    "alarms",
+    "notifications",
+    "<all_urls>"
+  ],
+
+  "background": {
+    "scripts": [
+      "src/odooApi.js",
+      "src/contactMapper.js",
+      "src/syncEngine.js",
+      "background.js"
+    ]
+  },
+
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Odoo Address Book Sync",
+    "default_icon": {
+      "48": "icons/icon.svg"
+    }
+  },
+
+  "icons": {
+    "48": "icons/icon.svg",
+    "96": "icons/icon.svg"
+  }
+}
