@@ -3,11 +3,11 @@
   "name": "Odoo Address Book Sync",
   "description": "Two-way sync between a Thunderbird address book and Odoo contacts",
   "version": "1.0.0",
-  "author": "OdooAddressBook",
+  "author": "Mark Ferraretto",
 
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
-      "id": "odoo-addressbook-sync@localhost",
+      "id": "odoo-address-book@dll.org.au",
       "strict_min_version": "91.0"
     }
   },
