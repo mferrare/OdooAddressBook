@@ -52,12 +52,10 @@ async function initStep1() {
   // Load address books
   const res = await messenger.runtime.sendMessage({ action: 'getAddressBooks' });
   if (res.success && res.books.length > 0) {
-    abSelect.innerHTML = res.books
-      .map(b => `<option value="${b.id}">${escHtml(b.name)}</option>`)
-      .join('');
+    abSelect.replaceChildren(...res.books.map(b => new Option(b.name, b.id)));
     abError.classList.add('hidden');
   } else {
-    abSelect.innerHTML = '<option value="">— no writable address books found —</option>';
+    abSelect.replaceChildren(new Option('— no writable address books found —', ''));
     // Encourage user to create a new one
     $('input[name="abChoice"][value="new"]').checked = true;
     toggleAbPanels(true);
@@ -122,9 +120,7 @@ function initStep2() {
     const res = await messenger.runtime.sendMessage({ action: 'getDatabases', url });
 
     if (res.success && res.databases.length > 0) {
-      dbSelect.innerHTML = res.databases
-        .map(db => `<option value="${escHtml(db)}">${escHtml(db)}</option>`)
-        .join('');
+      dbSelect.replaceChildren(...res.databases.map(db => new Option(db, db)));
       setStatus(statusBar, 'success', `Found ${res.databases.length} database(s).`);
     } else {
       // Odoo 16+ and hosted instances (odoo.com) disable /web/database/list.
@@ -340,7 +336,11 @@ async function startInitialSync() {
       `Sync complete! Created ${r.created} contact(s), updated ${r.updated}.`;
 
     if (r.errors && r.errors.length > 0) {
-      errorList.innerHTML = r.errors.map(e => `<li>${escHtml(e)}</li>`).join('');
+      errorList.replaceChildren(...r.errors.map(e => {
+        const li = document.createElement('li');
+        li.textContent = e;
+        return li;
+      }));
       errorList.classList.remove('hidden');
       resultIcon.textContent = '⚠️';
     }
@@ -378,15 +378,19 @@ async function showConfiguredView(settings) {
   view.classList.remove('hidden');
 
   const summary = $('#config-summary');
-  summary.innerHTML = [
-    ['Address Book', escHtml(settings.addressBookName || settings.addressBookId)],
-    ['Odoo URL',     escHtml(settings.odooUrl)],
-    ['Database',     escHtml(settings.odooDb)],
-    ['Username',     escHtml(settings.odooUsername)],
-    ['Sync filter',  escHtml(syncFilterLabel(settings.syncFilter))],
+  summary.replaceChildren(...[
+    ['Address Book',  settings.addressBookName || settings.addressBookId],
+    ['Odoo URL',      settings.odooUrl],
+    ['Database',      settings.odooDb],
+    ['Username',      settings.odooUsername],
+    ['Sync filter',   syncFilterLabel(settings.syncFilter)],
     ['Sync interval', `Every ${settings.syncIntervalMinutes} minutes`],
-    ['Conflict',     settings.conflictResolution === 'odoo' ? 'Odoo wins' : 'Thunderbird wins']
-  ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+    ['Conflict',      settings.conflictResolution === 'odoo' ? 'Odoo wins' : 'Thunderbird wins']
+  ].flatMap(([k, v]) => {
+    const dt = document.createElement('dt'); dt.textContent = k;
+    const dd = document.createElement('dd'); dd.textContent = v;
+    return [dt, dd];
+  }));
 
   const statusBar = $('#configured-status');
 
