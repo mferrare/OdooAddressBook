@@ -390,12 +390,14 @@ async function showConfiguredView(settings) {
 
   const statusBar = $('#configured-status');
 
-  $('#reconfigure-btn').addEventListener('click', () => {
-    // Reload as wizard with pre-filled values
+  $('#reconfigure-btn').addEventListener('click', async () => {
     prefillWizardFromSettings(settings);
     view.classList.add('hidden');
     $('#step-nav').classList.remove('hidden');
     showStep(1);
+    await initStep1();
+    initStep2();
+    initStep3();
   });
 
   $('#reset-sync-btn').addEventListener('click', async () => {

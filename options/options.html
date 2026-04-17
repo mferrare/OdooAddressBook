@@ -69,15 +69,18 @@
   <!-- ── Step 2: Odoo Connection ──────────────────────────────────────────── -->
   <section id="step-2" class="step hidden">
     <h2>Connect to Odoo</h2>
-    <p>Enter the details for your Odoo instance. The extension communicates directly with the Odoo JSON-RPC API.</p>
+    <p>Enter the details for your Odoo instance. The extension communicates directly with the Odoo XML-RPC API.</p>
 
     <div class="form-grid">
 
       <label for="odoo-url">Odoo URL</label>
-      <div class="input-group">
-        <input type="url" id="odoo-url" placeholder="https://mycompany.odoo.com"
-               spellcheck="false" autocomplete="off"/>
-        <button id="fetch-dbs" class="secondary small">Fetch Databases</button>
+      <div>
+        <div class="input-group">
+          <input type="url" id="odoo-url" placeholder="https://mycompany.odoo.com"
+                 spellcheck="false" autocomplete="off"/>
+          <button id="fetch-dbs" class="secondary small">Fetch Databases</button>
+        </div>
+        <p class="field-hint">Base URL only — e.g. <code>https://mycompany.odoo.com</code>, no trailing path</p>
       </div>
 
       <label for="odoo-db">Database</label>
